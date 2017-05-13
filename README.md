@@ -5,6 +5,8 @@ date:   2017-04-23 12:45:34 +0200
 categories: jekyll update
 ---
 
+All source code is hidden in `eda.ipynb`
+
 Few years ago, long before Quora Duplicates Competition on Kaggle saw lights of day, Quora hosted its own hackathon. One of tasks was similar in spirit to the one that keeps Kagglers busy - predict whether pair of questions are duplicates. There were some limitations, though - your model had to fit within 1024 MB of memory and run in under 60 seconds. This means that problem was definitely solvable without deep learning approaches. Since I don't have machine to run multiple neural networks, let alone huge ensembles that tend to win Kaggle contests, I will try my best at solving this challenge. It will definitely take me a lot longer than what Quora thought - but I'm not doing this for competition, after all.
 
 Data arrives in format typical for programming contests, atypical for data science contests. We can decipher this fairly simple.
