@@ -131,6 +131,7 @@ Random forest overfits vastly - I set parameters as it goes: max_depth to 15 and
 
 There are quite a few things to do before the end - choosing best model, by randomly testing combination of parameters and investigating, which features are most relevant. I will do only the latter, because I have learned one new trick since I wrote first post. It relies on randomly permuting features and calculating how much did it messed up with score function. According to this method, most relevant features, are: 
 
+# features sorted by relevance
          name         |loss from permuting|mean score with permuted
 ----------------------|------------------:|-----------------------:
 view_count_reverse    |           0.096998|                  0.8502
