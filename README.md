@@ -7,11 +7,9 @@ categories: jekyll update
 
 Few years ago, long before Quora Duplicates Competition on Kaggle saw lights of day, Quora hosted its own hackathon. One of tasks was similar in spirit to the one that keeps Kagglers busy - predict whether pair of questions are duplicates. There were some limitations, though - your model had to fit within 1024 MB of memory and run in under 60 seconds. This means that problem was definitely solvable without deep learning approaches. Since I don't have machine to run multiple neural networks, let alone huge ensembles that tend to win Kaggle contests, I will try my best at solving this challenge. It will definitely take me a lot longer than what Quora thought - but I'm not doing this for competition, after all.
 
-$\log \frac{N}{D}$
-
 Data arrives in format typical for programming contests, atypical for data science contests. We can decipher this fairly simple.
 
-{% highlight python linenos %}
+```python
 def load_data(input_name):
     
     with open(input_name, 'r') as f:
@@ -26,11 +24,11 @@ def load_data(input_name):
     
     return questions, keys, to_predict, labels
 
-{% endhighlight %}
+```
 
 Every question has its own, unique key. 
 
-{% highlight python linenos %}
+```python
 def turn_into_dict_by_keys(questions):
     qdict = {}
     
@@ -41,7 +39,7 @@ def turn_into_dict_by_keys(questions):
         qdict[key] = q
         
     return qdict
-{% endhighlight %}
+```
 
 Then we have to extract sole texts, topics and other features such as view counts and followers count - although I don't expect latter ones to matter much, if at all.
 
@@ -55,7 +53,7 @@ Well. Not funny. All in all, there are two thousands of pairs scoring zero on ma
 
 There's one more thing I need to do before building model. As one can easily point out, I can't pass this function on all of the data and then feed algorithm with it. I would be training model using knowledge derived from validation data - namely idf score. Because of that, I need simple interface that will make me do this calculations on every validation fold. Those familiar with sklearn probably know what I'm going to use - Pipelines, here we go! I wrapped function above in Transformer called QuestionTextVectorizer. To effectively test different grams, I will also use 
 
-{% highlight python linenos %}
+```python
 from sklearn.pipeline import make_pipeline, FeatureUnion
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
@@ -68,8 +66,7 @@ scores = cross_val_score(pip, keys, y, cv=10, n_jobs=-1)
 pip_two = make_pipeline( QuestionTextVectorizer(n_grams=2, qdict=qdict), LogisticRegression(C=5) )
 pip_two = make_pipeline(union, LogisticRegression(C=5))
 scores_two = cross_val_score(pip_united, keys, y, cv=10, n_jobs=-1)
-
-{% endhighlight python linenos %}
+```
 
 Results, are, well... not so good. First things first, question vectorizer with two-grams is so bad that it performs worse that randomly with logistic regression ( with regularization parameter C set to $$5$$ - which means unleashing variance, since in sklearn strength of regularization is inverse to $$C$$ parameter ) - $$48\%$$. Random forests ( not tuned ) beat it with $$53\%$$. When I use one-word vectorizer, I can squeeze accuracy as high as $$58.2 \pm 0.003\% $$ with LR and $$54 \pm 0.02\%$$ with RF ( that's strange, but again, I did not tune them ). Worth noting that model relying on single words score better ( up to $$58.7 \pm 0.01\%$$ ), while two-grams one landed around $$44.6\%$ accuracy. Before I go any further, it would be nice to visualize how different can be predictive of begin duplicate. 
 
