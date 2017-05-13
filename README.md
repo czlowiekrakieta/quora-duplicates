@@ -88,7 +88,7 @@ There's quite a lot of unused information laying around. First of all, I haven't
 
 Yes, I know that I could possibly do these two things in parallel. There's not that much overhead, though. Moreover, I come up with ideas iteratively and it is way easier to write another function to try it than fit it in existing code. 
 
-What I am not doing here is including possibility that occurence of two topics at the time could be beneficial to predictive power. After flop of two-grams I'm somehow reluctant to trying that idea. This time Vectorizer is called TopicVectorizer. Validating logistic regression on top of this yields $$57 \pm 0.007\%$$ of accuracy.
+What I am not doing here is including possibility that occurence of two topics at the time could be beneficial to predictive power. After flop of two-grams I'm somehow reluctant to trying that idea. This time Vectorizer is called TopicVectorizer. Validating logistic regression on top of this yields `57%` of accuracy.
 
 
 ![Histograms](topicloghistograms.png)
@@ -96,13 +96,13 @@ What I am not doing here is including possibility that occurence of two topics a
 
 Well, I'm amazed that it can predict anything at all, judging by first set of histograms. 
 
-That's not everything I can do with topics. In fact, there's something I can extract out of them to produce classifier slightly more accurate. In the manner of vectorizing every text input with tf-idf method, I will extract knowledge of words inside particular topics. That is, for every word ( or n-gram, but procedure is similar ) $$w$$ in topic $$T$$ and question $$Q$$, I count number of topics $$w$$ can be found in. I divide it by number of all topics for given question and multiply but $$\log \frac{ N }{ 1 + \# Q(w) } $$, where $$Q(w)$$ denotes set of questions, which have $$w$$ in its topics. Logistic regression on top of this vectorizer alone yields $$58.6 \pm 0.005\%$$ and $$53.5 \pm 0.007\%$$ accuracy for single words and two words vectorizer, respectively. Logic of this is implemented in WordInTopicVectorizer.
+That's not everything I can do with topics. In fact, there's something I can extract out of them to produce classifier slightly more accurate. In the manner of vectorizing every text input with tf-idf method, I will extract knowledge of words inside particular topics. That is, for every word ( or n-gram, but procedure is similar ) `w` in topic `T` and question `Q`, I count number of topics `w` can be found in. I divide it by number of all topics for given question and multiply but `log(N/(1+#Q(w)))`, where `Q(w)` denotes set of questions, which have `w` in its topics. Logistic regression on top of this vectorizer alone yields `58.6%` and `53.5%` accuracy for single words and two words vectorizer, respectively. Logic of this is implemented in WordInTopicVectorizer.
 
 There's some more information laying around. I have not utilized basic statistics - view counts, count of followers and question age. Moreover, there's number of followers assigned to every topic. All in all, there are six more features to go.
 
-In order to model relationship between these quantities, I decided to calculate two quotients for every feature. First one - value for first question divided by value for second one, and vice versa. I have also tested squeezing value by logarithm with base $$e$$ to help algorithm compale scales of values instead of values itself - it helped. Quotient is also squeezed by logarithm of base ten. Best result? $$74.5 \pm 0.4\%$$, with squeezing both values and quotients. Second best, $$74.3 \pm 0.5\%$$, came out from squeezing quotient, but not values. If you want to know, how I did that, look up StatsVectorizer.
+In order to model relationship between these quantities, I decided to calculate two quotients for every feature. First one - value for first question divided by value for second one, and vice versa. I have also tested squeezing value by logarithm with base `e` to help algorithm compale scales of values instead of values itself - it helped. Quotient is also squeezed by logarithm of base ten. Best result? `74.5%`, with squeezing both values and quotients. Second best, `74.3`, came out from squeezing quotient, but not values. If you want to know, how I did that, look up StatsVectorizer.
 
-What's worth noting, though, is that these scores are not drastically better than the ones yielded by algorithm with one-directional quotient - best scores were around $$73\%$$. Moreover, algorithm does not overfit to data. It might be caused by fact that our model is very, very simple.
+What's worth noting, though, is that these scores are not drastically better than the ones yielded by algorithm with one-directional quotient - best scores were around `73%` Moreover, algorithm does not overfit to data. It might be caused by fact that our model is very, very simple.
 
 There's one more step to make - feeding algorith with all the data I've extracted. That's what FeatureUnion from sklearn is for! It can transform data in parallel, so everything I have to do is to give it list of sklearn Transformers and put it into pipeline, ended with some estimator. Finally, I used statistics, topics, words in topics and questions. 
 
@@ -129,7 +129,7 @@ all           |             0.7397|       0.8678
 
 Random forest overfits vastly - I set parameters as it goes: max_depth to 15 and n_estimators to 50. On the other hand, logistic regression is hardly suprised by new data - this classifier is far less powerful, so this is somehow expected. Moreover, it's worth noting that RF fails in comparison with LR while using information from questions only.
 
-There are quite a few things to do before the end - choosing best model, by randomly testing combination of parameters and investigating, which features are most relevant. I will do only the latter, because I have learned one new trick since I wrote first post. It relies on randomly permuting features and calculating how much did it messed up with score function. According to this method, most relevant features, are: 
+There are quite a few things to do before the end - choosing best model, by randomly testing combination of parameters and investigating, which features are most relevant. I will do only the latter, because I have learned one new trick since I wrote sentiment analysis in `oxford-nlp` repo. It relies on randomly permuting features and calculating how much did it messed up with score function. According to this method, most relevant features, are: 
 
 # features sorted by relevance
          name         |loss from permuting|mean score with permuted
