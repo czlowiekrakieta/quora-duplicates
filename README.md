@@ -131,34 +131,13 @@ Random forest overfits vastly - I set parameters as it goes: max_depth to 15 and
 
 There are quite a few things to do before the end - choosing best model, by randomly testing combination of parameters and investigating, which features are most relevant. I will do only the latter, because I have learned one new trick since I wrote sentiment analysis in `oxford-nlp` repo. It relies on randomly permuting features and calculating how much did it messed up with score function. According to this method, most relevant features, are: 
 
-# features sorted by relevance
-         name         |loss from permuting|mean score with permuted
-----------------------|------------------:|-----------------------:
-view_count_reverse    |           0.096998|                  0.8502
-age                   |           0.061734|                  0.8855
-1_tfidf_score         |           0.059663|                  0.8876
-age_reverse           |           0.054678|                  0.8926
-view_count            |           0.034944|                  0.9123
-1_max_outsider        |           0.029397|                  0.9178
-1_mean_outsider       |           0.017442|                  0.9298
-follow_count_reverse  |           0.016518|                  0.9307
-1_common_score        |           0.015642|                  0.9316
-follow_count          |           0.015469|                  0.9318
-idf_tops              |           0.015404|                  0.9318
-min_followers_reverse |           0.015232|                  0.9320
-1_tfidf               |           0.010834|                  0.9364
-mean_followers        |           0.009912|                  0.9373
-mean_followers_reverse|           0.009774|                  0.9375
-mutual_cnt            |           0.009138|                  0.9381
-mean_outsiders        |           0.008250|                  0.9390
-1_occurence           |           0.007930|                  0.9393
-1_max_out             |           0.007856|                  0.9394
-1_mean_out            |           0.007814|                  0.9394
-min_followers         |           0.006952|                  0.9403
-comm_tops             |           0.006766|                  0.9405
-max_outsiders         |           0.006259|                  0.9410
-max_followers_reverse |           0.005789|                  0.9415
-max_followers         |           0.004952|                  0.9423
+view_count_reverse, 0.096998
+age, 0.061734
+1_tfidf_score, 0.059663
+age_reverse, 0.054678
+view_count, 0.034944
+
+Second number is loss to mean reference score, which is `94.25%`
 
 How is this mean score so high? Well, at first I fit model to whole training data. Then I went through every feature, permuted it 50 times and took mean loss.
 
